@@ -1,0 +1,8 @@
+.vscode/
+TestResults/
+**/__pycache__
+**/.pytest_cache
+Data/
+Context/
+Helpers/json_loader.py
+Helpers/dotdict.py
