@@ -1,0 +1,14 @@
+services:
+  python-playwright-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - BROWSER=chromium
+      - HEADLESS=True
+    volumes:
+      - .:/app
+      - ./TestResults:/app/TestResults
+    working_dir: /app
+    command: >
+      pytest -m smoke
