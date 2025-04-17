@@ -5,25 +5,45 @@
 trigger:
 - master
 
-resources:
-- repo: self
+pool:
+  vmImage: 'ubuntu-latest'
 
 variables:
   tag: '$(Build.BuildId)'
+  TEST_RESULTS_DIR: 'TestResults'
+  REPORT_FILE: 'report.html'
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          $(tag)
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.10'
+    addToPath: true
+
+- task: Bash@3
+  displayName: 'Install Docker and Docker Compose'
+  inputs:
+    targetType: 'inline'
+    script: |
+      sudo apt-get update
+      sudo apt-get install docker-compose -y
+
+- task: Bash@3
+  displayName: 'Build Docker Image'
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker-compose build
+
+- task: Bash@3
+  displayName: 'Run Tests in Docker'
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker-compose run --rm python-playwright-tests
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish HTML Report'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/$(TEST_RESULTS_DIR)'
+    artifactName: 'TestReport'
+
