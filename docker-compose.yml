@@ -6,6 +6,7 @@ services:
     environment:
       - BROWSER=chromium
       - HEADLESS=True
+      - JAVA_OPTS=-Dhudson.model.DirectoryBrowserSupport.CSP=default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
     volumes:
       - .:/app
       - ./TestResults:/app/TestResults
