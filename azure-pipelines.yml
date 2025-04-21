@@ -24,9 +24,9 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      docker-compose down --volumes --remove-orphans || true
-      docker-compose build
-      docker-compose run --rm python-playwright-tests
+      docker compose down --volumes --remove-orphans || true
+      docker compose build
+      docker compose run --rm python-playwright-tests
 
 - task: PublishPipelineArtifact@1
   inputs:
