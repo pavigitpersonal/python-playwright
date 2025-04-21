@@ -28,15 +28,14 @@ steps:
       docker compose build
       docker compose run --rm python-playwright-tests || true
 
-- task: PublishPipelineArtifact@1
+- task: Bash@3
   displayName: 'Create markdown summary'
   inputs:
-    targetPath: 'TestResults'
-    artifactName: 'TestReport'
+    targetPath: 'inline'
     script: |
       echo "## 🧪 Pytest Report" > summary.md
-      echo "Click to download: [report.html](./TestReport/report.html)" >> summary.md
-  
+      echo "[📄 View HTML Report](./TestReport/report.html)" >> summary.md
+
 
 - task: PublishPipelineArtifact@1
   inputs:
