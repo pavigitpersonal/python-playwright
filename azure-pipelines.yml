@@ -16,7 +16,7 @@ variables:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.10'
+    versionSpec: '3.11'
     addToPath: true
 
 - task: Bash@3
@@ -24,26 +24,22 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      sudo apt-get update
-      sudo apt-get install docker-compose -y
-
-- task: Bash@3
-  displayName: 'Build Docker Image'
-  inputs:
-    targetType: 'inline'
-    script: |
+      docker-compose down --volumes --remove-orphans || true
       docker-compose build
-
-- task: Bash@3
-  displayName: 'Run Tests in Docker'
-  inputs:
-    targetType: 'inline'
-    script: |
       docker-compose run --rm python-playwright-tests
 
 - task: PublishPipelineArtifact@1
-  displayName: 'Publish HTML Report'
   inputs:
-    targetPath: '$(Build.SourcesDirectory)/$(TEST_RESULTS_DIR)'
+    targetPath: 'TestResults'
     artifactName: 'TestReport'
+
+- script: |
+    echo "## 🧪 Pytest Report" > summary.md
+    echo "Click to download: [report.html](./TestReport/report.html)" >> summary.md
+  displayName: 'Create markdown summary'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'summary.md'
+    artifactName: 'TestReportSummary'
 
