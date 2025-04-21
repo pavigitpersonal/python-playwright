@@ -36,7 +36,14 @@ steps:
     script: |
       echo "## 🧪 Pytest Report" > summary.md
       echo "[📄 View HTML Report](./TestReport/report.html)" >> summary.md
-      echo "##vso[task.uploadsummary]summary.md"
+      
+      if [ -f summary.md ]; then
+        echo "Uploading summary.md to pipeline summary..."
+        echo "##vso[task.uploadsummary]$(Build.SourcesDirectory)/summary.md"
+      else
+        echo "summary.md not found!"
+        exit 1
+      fi
 
 
 - task: PublishPipelineArtifact@1
