@@ -31,14 +31,17 @@ steps:
 - task: Bash@3
   displayName: 'Create markdown summary'
   inputs:
-    targetPath: 'inline'
+    targetType: 'inline'
+    workingDirectory: '$(Build.SourcesDirectory)'
     script: |
       echo "## 🧪 Pytest Report" > summary.md
       echo "[📄 View HTML Report](./TestReport/report.html)" >> summary.md
+      echo "##vso[task.uploadsummary]summary.md"
 
 
 - task: PublishPipelineArtifact@1
+  displayName: 'Publish HTML Report Artifact'
   inputs:
-    targetPath: 'summary.md'
-    artifactName: 'TestReportSummary'
+    targetPath: '$(Build.SourcesDirectory)/TestResults'
+    artifactName: 'TestReport'
 
